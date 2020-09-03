@@ -118,6 +118,9 @@ Game = function(){
         counter1 = new ArrTools.Counter(word1);
         counter2 = new ArrTools.Counter(word2);
 
+        console.log(counter1);
+        console.log(counter2);
+
         return counter1.superset(counter2, strict);
     }        
 
@@ -191,8 +194,10 @@ Game = function(){
         for (i = 0; i < word_list.length; i++){
             var word = word_list[i];
             // First, check if candidate is a superset of the current word 
+            console.log(`Gonna check if can take ${word}. Candidate: ${candidate}. Superset? ${superset_word(candidate, word, strict=true)}`)
             if (superset_word(candidate, word, strict=true)){
 
+                console.log(`Gonna check if tiles are there. Current: ${this.current}. Candidate: ${candidate}. Needed tiles: ${subtract(candidate, word_list[i])}. Superset? ${superset_word(this.current, subtract(candidate, word_list[i]))}`)
                 // Then, check if the tiles needed to make candidate are in the middle
                 if (!superset_word(this.current, subtract(candidate, word_list[i]))){
                     event_type = 'tiles';

@@ -8,10 +8,9 @@ app.use(express.static(__dirname));
 var port = process.env.PORT || 3000;
 
 // Game parameters
-var flip_delay = 1500;
+var flip_delay = 0;
 
 // Initializing
-var currentplayer = 1;
 var flip_waiting = false;
 var flip_time = 0;
 var pending_take = undefined;
@@ -27,6 +26,8 @@ http.listen(port, function(){
 require('./game.js');
 game = new Game(is_server = true);
 
+var ids_connected = {1: false, 2: false};
+
 io.on('connect', function(socket){
     
     var client_ip = socket.handshake.headers['x-real-ip'];
@@ -35,10 +36,21 @@ io.on('connect', function(socket){
 
     // Send the full game state
     socket.emit('game transmission', game); // {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list, is_word: game.is_word});
-    console.log(`Sending player id ${currentplayer}`);
-    socket.emit('game id', currentplayer);
-    var player_id = currentplayer;
-    currentplayer += 1;
+    
+    if (!ids_connected[1]){
+        var player_id = 1;
+        ids_connected[1] = true;
+    }
+    else if (!ids_connected[2]){
+        var player_id = 2;
+        ids_connected[2] = true;
+    }
+    else{
+        var player_id = 0;
+    }
+    
+    console.log(`Sending player id ${player_id}`);
+    socket.emit('game id', player_id);
 
     check_flip_take = function(){
         if (flip_waiting){
@@ -55,7 +67,8 @@ io.on('connect', function(socket){
     setInterval(check_flip_take, 100);
 
     socket.on('disconnect', () => {
-        console.log(`Player ${player_id} disconnected!`)
+        console.log(`Player ${player_id} disconnected!`);
+        ids_connected[player_id] = false;
     });
 
     socket.on('flip_request', function(){
@@ -110,6 +123,7 @@ io.on('connect', function(socket){
             // No pending take, so this received take becomes the pending take if you can still take it
             if (game.can_take(recv_take)){
                 pending_take = recv_take;
+                io.emit('pending take');
             }
         }
 

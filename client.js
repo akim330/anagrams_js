@@ -33,6 +33,7 @@ var update_number = 0;
 var initialized = false;
 var down = false;
 var game_transmitted = false;
+var pending_take = false;
 
 // KEY handler
 document.addEventListener("keydown", keyhandler);
@@ -118,12 +119,6 @@ function keyhandler(e){
     }
 }
 
-// Take function
-
-take = function(game){
-
-}
-
 // MAIN
 
 window.onload = init;
@@ -147,7 +142,9 @@ function init() {
 
 function gameLoop() {
     // Send the server time since last update in case there's a pending take
-    socket.emit('check take', new Date().getTime() - last_update)
+    if (pending_take){
+        socket.emit('check take', new Date().getTime() - last_update)
+    }
 
     graphics.update_display(game, player_id, graphics_to_update, guess, status);
     graphics_to_update = [];
@@ -208,7 +205,12 @@ socket.on('flip', function (current){
     last_update = new Date().getTime();
 });
 
+socket.on('pending take', function(){
+    pending_take = true; 
+});
+
 socket.on('take update', function (game_state){
+    pending_take = false;
     console.log("Take update");
 
     game.current = game_state.current;

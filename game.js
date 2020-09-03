@@ -204,6 +204,7 @@ Game = function(is_server){
         console.log(`${word_list.length}`)
 
         for (i = 0; i < word_list.length; i++){
+            var word = word_list[i];
             // First, check if candidate is a superset of the current word 
             if (superset_word(candidate, word, strict=true)){
 
@@ -259,7 +260,7 @@ Game = function(is_server){
 
         // Then check if it's a word
         if (candidate.length < 10){
-            var is_word = this.is_word(candidate) || word_add_twl.includes(candidate);
+            var is_word = this.twl_dict[candidate] || word_add_twl.includes(candidate);
         }
         else{
             var is_word = api.get_word_data(candidate).length != 0;

@@ -3,16 +3,17 @@ ArrTools = {
         array.forEach(val => this[val] = (this[val] || 0) + 1)
 
         this.superset = function(counter2, strict){
+            extra_left = false;
             for (const [key, count] of Object.entries(counter2)){
                 if (this[key] == undefined || this[key] - counter2[key] < 0){
                     return false
                 }
                 else if (this[key] - counter2[key] > 0){
-                        extra_left = true
+                    extra_left = true;
                 }
             }
 
-            if (strict && Object.keys(counter1).length == Object.keys(counter2).length){
+            if (strict && !extra_left && Object.keys(counter1).length == Object.keys(counter2).length){
                 return false
             }
             else{

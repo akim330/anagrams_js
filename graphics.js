@@ -258,10 +258,36 @@ Graphics = function(){
         return tile_dict;
     } */
 
+    scaleIt = function(source, scaleFactor){
+        var c = document.createElement('canvas');
+        var ctx_temp = c.getContext('2d');
+        var w = source.width * scaleFactor;
+        var h = source.height * scaleFactor;
+        c.width = w;
+        c.height = h;
+        ctx_temp.drawImage(source, 0, 0, w, h);
+        return(c);
+    }
+
+    this.draw_tile = function(ctx, img, x, y, size){
+        original_width = img.width;
+        scale_factor = size / img.width;
+        root_scale = Math.sqrt(scale_factor);
+
+        // scale the 1000x669 image in half to 500x334 onto a temp canvas
+        var c1 = scaleIt(img, root_scale);
+        
+        final_width = c1.width * root_scale;
+        final_height = c1.height * root_scale;
+        // scale the 500x335 canvas in half to 250x167 onto the main canvas
+        ctx.drawImage(c1, x, y, final_width, final_height);
+    }
+
     this.draw_word = function(ctx, word, x, y, size){
         console.log(`Drawing word ${word}`);
         for (let i = 0; i < word.length; i++){
-            ctx.drawImage(this.tile_dict[word.charAt(i)], x, y, size, size);
+            // ctx.drawImage(this.tile_dict[word.charAt(i)], x, y, size, size);
+            this.draw_tile(ctx, this.tile_dict[word.charAt(i)], x, y, size);
             x += size;
         }
     }
@@ -269,11 +295,11 @@ Graphics = function(){
     this.draw_word_list = function(ctx, words_list){
         if (words_list.length <= this.default_words_per_col * 2){
             var size_words = this.default_size_words;
-            var words_per_col = Math.floor(this.canvas.self_words.height / size_words);
+            var words_per_col = Math.floor(this.canvas.self_words.height / (size_words * this.gap_factor));
         }
         else{
             var size_words = this.default_size_words/ 1.5;
-            var words_per_col = Math.floor(this.canvas.self_words.height / size_words);
+            var words_per_col = Math.floor(this.canvas.self_words.height / (size_words * this.gap_factor));
         }
 
         var x_gap = size_words;
@@ -282,7 +308,7 @@ Graphics = function(){
         var y = 0;
         var second_column = false;
 
-        var word_end_x = []
+        var word_end_x = [];
 
         for (let i = 0; i < words_list.length; i++){
 
@@ -345,18 +371,14 @@ Graphics = function(){
             // Based on how many tiles there are, calculate tile size and tiles per row
             // console.log(`Current length: ${game.current.length}`);
             // console.log(`Tiles per row: ${this.default_tiles_per_row}`);
-            if (game.current.length <= this.default_tiles_per_row){
+            if (game.current.length <= this.default_tiles_per_row * 2){
                 // console.log(`Go with default tile size: ${this.default_size_tiles}`);
                 var size_tiles = this.default_size_tiles;
-                var tiles_per_row = Math.floor(this.canvas.tiles.width / size_tiles);
-            }
-            else if(game.current.length <= this.default_tiles_per_row * 2){
-                var size_tiles = this.default_size_tiles / 1.5;
-                var tiles_per_row = Math.floor(this.canvas.tiles.width / size_tiles);
+                var tiles_per_row = Math.floor(this.canvas.tiles.width / (size_tiles * this.gap_factor));
             }
             else{
-                var size_tiles = this.default_size_tiles / 2;
-                var tiles_per_row = Math.floor(this.canvas.tiles.width / size_tiles);
+                var size_tiles = this.default_size_tiles / 1.5;
+                var tiles_per_row = Math.floor(this.canvas.tiles.width / (size_tiles * this.gap_factor));
             }
 
             var x_gap = size_tiles * 1.2;
@@ -366,8 +388,9 @@ Graphics = function(){
 
             for (let i = 0; i < game.current.length; i++){
                 // console.log(`Size of tiles: ${size_tiles}`)
-                this.ctx.tiles.drawImage(this.tile_dict[game.current[i]], x, y, size_tiles, size_tiles);
-                
+                // this.ctx.tiles.drawImage(this.tile_dict[game.current[i]], x, y, size_tiles, size_tiles);
+                this.draw_tile(this.ctx.tiles, this.tile_dict[game.current[i]], x, y, size_tiles);
+
                 if (i % tiles_per_row == tiles_per_row - 1){
                     x = 0;
                     y += y_gap;
