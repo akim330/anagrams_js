@@ -404,7 +404,7 @@ Game = function(is_server){
                 this.new_word_i = take.taken_i;
             }
             else if (take.victim == 1){
-                this.player1words_list.splice(this.player2words_list.indexOf(take.taken_word), 1);
+                this.player1words_list.splice(this.player1words_list.indexOf(take.taken_word), 1);
                 this.player2words_list.push(take.candidate);
                 if (!this.player1words_list.includes(take.taken_word)){
                     delete this.player1words_dict[take.taken_word];
