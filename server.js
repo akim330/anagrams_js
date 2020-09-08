@@ -8,7 +8,7 @@ app.use(express.static(__dirname));
 var port = process.env.PORT || 3000;
 
 // Game parameters
-var flip_delay = 0;
+var flip_delay = 1500;
 
 // Initializing
 var flip_waiting = false;
