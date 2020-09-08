@@ -86,6 +86,7 @@ io.on('connect', function(socket){
             if (pending_take.taker != player_id){
                 console.log("Pending take was other player's, so now will update");
                 if (game.both_can_take(pending_take, recv_take)){
+                    console.log("Both takes valid!");
                     game.update(pending_take, pending_take.taker);
                     game.update(recv_take, player_id)
                     game.last_take = recv_take;
@@ -94,6 +95,7 @@ io.on('connect', function(socket){
                     io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list});
                 }
                 else if (recv_take.take_time < pending_take.take_time){
+                    console.log("Recv take wins!");
                     game.update(recv_take, player_id);
                     game.last_take = recv_take;
                     pending_take = undefined;
@@ -102,6 +104,7 @@ io.on('connect', function(socket){
 
                 }
                 else{
+                    console.log("Pending take wins!");
                     game.update(pending_take, pending_take.taker);
                     game.last_take = pending_take;
                     pending_take = undefined;
