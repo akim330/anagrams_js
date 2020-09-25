@@ -92,7 +92,7 @@ io.on('connect', function(socket){
                     game.last_take = recv_take;
                     pending_take = undefined;
 
-                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list});
+                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list, last_take: game.last_take});
                 }
                 else if (recv_take.take_time < pending_take.take_time){
                     console.log("Recv take wins!");
@@ -100,7 +100,7 @@ io.on('connect', function(socket){
                     game.last_take = recv_take;
                     pending_take = undefined;
 
-                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list});
+                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list, last_take: game.last_take});
 
                 }
                 else{
@@ -109,7 +109,7 @@ io.on('connect', function(socket){
                     game.last_take = pending_take;
                     pending_take = undefined;
 
-                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list});
+                    io.emit('take update', {current: game.current, player1words_dict: game.player1words_dict, player2words_dict: game.player2words_dict, player1words_list: game.player1words_list, player2words_list: game.player2words_list, last_take: game.last_take});
                 }
             }
             else{

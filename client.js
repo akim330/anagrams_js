@@ -211,7 +211,7 @@ socket.on('pending take', function(){
 
 socket.on('take update', function (game_state){
     pending_take = false;
-    console.log("Take update");
+    console.log("Take update"); ``
 
     game.current = game_state.current;
     game.player1words_dict = game_state.player1words_dict;
